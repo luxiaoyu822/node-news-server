@@ -5,7 +5,8 @@ var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 
 var indexRouter = require('./routes/index')
-var usersRouter = require('./routes/users')
+const UserRouter = require('./routes/backend/UserRouter')
+const JWT = require('./util/JWT')
 
 var app = express()
 
@@ -20,17 +21,42 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
-app.use('/users', usersRouter)
 
 /* 
 /backend 后台系统
 /frontend 前台系统
 */
 
+app.use((req, res, next) => {
+  if (req.url === '/backend/user/login') {
+    next()
+    return
+  }
+
+  const token = req.headers['authorization'].split(' ')[1]
+  if (token) {
+    const payload = JWT.verify(token)
+    if (payload) {
+      const newToken = JWT.generate(
+        {
+          _id: payload._id,
+          username: payload.username,
+        },
+        '1d'
+      )
+      res.header('Authorization', newToken)
+      next()
+    } else {
+      res.send({ code: -1, info: '身份验证失效' })
+    }
+  }
+})
+
+app.use(UserRouter)
+
 app.use(function (req, res, next) {
   next(createError(404))
 })
-
 
 app.use(function (err, req, res, next) {
   res.locals.message = err.message
