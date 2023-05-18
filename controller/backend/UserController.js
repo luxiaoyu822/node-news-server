@@ -30,6 +30,44 @@ const UserController = {
       })
     }
   },
+
+  update: async (req, res) => {
+    try {
+      const token = req.headers['authorization'].split(' ')[1]
+      const { username, gender, introduction } = req.body
+      const avatar = req.file ? `/avataruploads/${req.file.filename}` : ''
+      const payload = JWT.verify(token)
+      await UserService.update({
+        _id: payload._id,
+        username,
+        gender: Number(gender),
+        introduction,
+        avatar,
+      })
+      if (avatar) {
+        res.send({
+          code: 1,
+          data: {
+            username,
+            gender: Number(gender),
+            introduction,
+            avatar,
+          },
+        })
+      } else {
+        res.send({
+          code: 1,
+          data: {
+            username,
+            gender: Number(gender),
+            introduction,
+          },
+        })
+      }
+    } catch (error) {
+      res.send({ code: -1, info: '更新失败' })
+    }
+  },
 }
 
 module.exports = UserController
