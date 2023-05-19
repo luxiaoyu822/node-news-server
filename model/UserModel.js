@@ -1,14 +1,53 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const bcrypt = require('bcrypt')
 
-const UserType = {
-  username: String,
-  password: String,
-  gender: Number, //性别，0，1，2
-  introduction: String,
-  avatar: String,
-  role: Number, //管理员1，编辑2
-}
+const UserType = new Schema({
+  username: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  gender: {
+    type: Number,
+    enum: [0, 1, 2],
+    default: 0,
+  },
+  introduction: {
+    type: String,
+    default: '',
+  },
+  avatar: {
+    type: String,
+    default: '',
+  },
+  role: {
+    type: Number,
+    enum: [1, 2],
+    default: 2,
+  },
+})
 
-const UserModel = mongoose.model('user', new Schema(UserType))
+UserType.pre('save', function (next) {
+  const user = this
+  if (!user.isModified('password')) {
+    return next()
+  }
+  bcrypt.genSalt(10, function (err, salt) {
+    if (err) {
+      return next(err)
+    }
+    bcrypt.hash(user.password, salt, function (err, hash) {
+      if (err) {
+        return next(err)
+      }
+      user.password = hash
+      next()
+    })
+  })
+})
+const UserModel = mongoose.model('user', UserType)
 module.exports = UserModel

@@ -1,10 +1,9 @@
 const UserModel = require('../../model/UserModel')
 
 const UserService = {
-  login: async ({ username, password }) => {
+  login: async ({ username }) => {
     return UserModel.find({
       username,
-      password,
     })
   },
   update: async ({ _id, username, gender, introduction, avatar }) => {
@@ -16,6 +15,16 @@ const UserService = {
     } else {
       return UserModel.updateOne({ _id }, { username, gender, introduction })
     }
+  },
+  add: async ({ username, password, gender, introduction, role, avatar }) => {
+    UserModel.create({
+      username,
+      password,
+      gender,
+      introduction,
+      role,
+      avatar,
+    })
   },
 }
 
