@@ -98,6 +98,30 @@ const UserController = {
       res.send({ code: -1, info: '添加失败' })
     }
   },
+  getList: async (req, res) => {
+    try {
+      const result = await UserService.getList()
+      res.send({ code: 1, info: '获取用户列表成功', data: result })
+    } catch (error) {
+      res.send({ code: -1, info: '获取用户列表失败' })
+    }
+  },
+  delete: async (req, res) => {
+    try {
+      await UserService.delete(req.params.id)
+      res.send({ code: 1, info: '删除成功' })
+    } catch (error) {
+      res.send({ code: -1, info: '删除失败' })
+    }
+  },
+  edit: async (req, res) => {
+    try {
+      const { _id, username, role, introduction } = req.body
+      await UserService.edit(_id, username,  role, introduction)
+      res.send({ code: 1, info: '编辑成功' })
+    } catch (error) {
+      res.send({ code: -1, info: '编辑失败' })
+    }
+  },
 }
-1
 module.exports = UserController
