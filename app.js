@@ -28,7 +28,7 @@ app.use('/', indexRouter)
 */
 
 app.use((req, res, next) => {
-  if (req.url === '/backend/user/login') {
+  if (req.url === '/backend/login') {
     next()
     return
   }
