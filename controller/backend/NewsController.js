@@ -64,7 +64,6 @@ const NewsController = {
       res.send({
         code: 1,
         info: '删除成功',
-        data: result,
       })
     } catch (error) {
       console.log(error)
