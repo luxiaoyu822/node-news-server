@@ -90,6 +90,22 @@ const NewsController = {
       })
     }
   },
+  edit: async (req, res) => {
+    try {
+      const cover = req.file ? `/newsuploads/${req.file.filename}` : ''
+      await NewsService.edit({ ...req.body, cover, editTime: new Date() })
+      res.send({
+        code: 1,
+        info: '修改成功',
+      })
+    } catch (error) {
+      console.log(error)
+      res.send({
+        code: -1,
+        info: '修改失败',
+      })
+    }
+  },
 }
 
 module.exports = NewsController

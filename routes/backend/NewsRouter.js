@@ -12,5 +12,6 @@ NewsRouter.post(
 NewsRouter.get('/backend/news-manage/list', NewsController.getList)
 NewsRouter.put('/backend/news-manage/publish', NewsController.publish)
 NewsRouter.post('/backend/news-manage/delete', NewsController.delete)
+NewsRouter.post('/backend/news-manage/edit',upload.single('file'), NewsController.edit)
 NewsRouter.get('/backend/news-manage/news/:id',NewsController.getNews)
 module.exports = NewsRouter

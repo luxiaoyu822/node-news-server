@@ -23,6 +23,27 @@ const NewsService = {
   getNews: async ({ id }) => {
     return NewsModel.findOne({ _id: id })
   },
+  edit: async ({
+    _id,
+    title,
+    content,
+    categroy,
+    cover,
+    isPublish,
+    editTime,
+  }) => {
+    if (cover) {
+      return NewsModel.updateOne(
+        { _id },
+        { title, content, categroy, cover, isPublish, editTime }
+      )
+    } else {
+      return NewsModel.updateOne(
+        { _id },
+        { title, content, categroy, isPublish, editTime }
+      )
+    }
+  },
 }
 
 module.exports = NewsService
