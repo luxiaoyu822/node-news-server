@@ -4,11 +4,11 @@ const Schema = mongoose.Schema
 const NewsType = new Schema({
   title: {
     type: String,
-    required: true,
+    default:''
   },
   content: {
     type: String,
-    required: true,
+    default:''
   },
   categroy: {
     type: Number,

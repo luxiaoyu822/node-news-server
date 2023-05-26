@@ -8,6 +8,7 @@ const JWT = require('./util/JWT')
 const NewsRouter = require('./routes/backend/NewsRouter')
 const frontendNewsRouter = require('./routes/frontend/NewsRouter')
 const ProductRouter = require('./routes/backend/ProductRouter')
+const frontendProductRouter = require('./routes/frontend/ProductRouter')
 
 var app = express()
 
@@ -18,28 +19,33 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 //frontend 前后系统
 app.use(frontendNewsRouter)
+app.use(frontendProductRouter)
 //backend 后台系统 经过token验证
 app.use((req, res, next) => {
-  if (req.url === '/backend/login') {
+  if (!req.url.includes('/backend')) {
     next()
     return
-  }
-
-  const token = req.headers['authorization'].split(' ')[1]
-  if (token) {
-    const payload = JWT.verify(token)
-    if (payload) {
-      const newToken = JWT.generate(
-        {
-          _id: payload._id,
-          username: payload.username,
-        },
-        '1d'
-      )
-      res.header('Authorization', newToken)
+  } else {
+    if (req.url === '/backend/login') {
       next()
-    } else {
-      res.send({ code: -1, info: '身份验证失效' })
+      return
+    }
+    const token = req.headers['authorization'].split(' ')[1]
+    if (token) {
+      const payload = JWT.verify(token)
+      if (payload) {
+        const newToken = JWT.generate(
+          {
+            _id: payload._id,
+            username: payload.username,
+          },
+          '1d'
+        )
+        res.header('Authorization', newToken)
+        next()
+      } else {
+        res.send({ code: -1, info: '身份验证失效' })
+      }
     }
   }
 })
